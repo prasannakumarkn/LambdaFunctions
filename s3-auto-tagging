@@ -1,0 +1,36 @@
+import json
+import boto3
+
+s3client = boto3.client('s3')
+
+
+def lambda_handler(event, context):
+    try:
+        print(event)
+        bucket_name=event['detail']['requestParameters']['bucketName']
+        print(bucket_name)
+        bucket_tagging = s3client.put_bucket_tagging(
+            Bucket=bucket_name,
+            Tagging={
+                'TagSet': [
+                    {
+                        'Key': 'created-by',
+                        'Value': 'prasanna'
+                    },
+                ]
+            }
+        )
+        s3client.put_bucket_encryption(
+        Bucket=bucket_name,
+        ServerSideEncryptionConfiguration={
+            'Rules': [
+                {
+                    'ApplyServerSideEncryptionByDefault': {
+                        'SSEAlgorithm': 'AES256'
+                    }
+                },
+            ]
+          }
+        )
+    except Exception, e:
+        print e
