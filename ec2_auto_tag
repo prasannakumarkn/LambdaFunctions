@@ -1,0 +1,34 @@
+import json
+import boto3
+
+def lambda_handler(event, context):
+    try:
+        print(event)
+        items = event["detail"]["responseElements"]["instancesSet"]["items"]
+        region = event["detail"]["awsRegion"]
+        LaunchedBy = event["detail"]['userIdentity']['arn']
+        for item in items:
+            instanceid= item['instanceId']
+            amiid = item['imageId']
+            ec2client = boto3.client('ec2', region_name = region)
+            response= ec2client.describe_images( ImageIds=[amiid])
+            AMI_Name= response['Images'][0]['Name']
+            print(AMI_Name)
+            print(response)
+            ec2client.create_tags(
+                Resources=[
+                    instanceid,
+                ],
+                Tags=[
+                    {
+                        'Key': 'platform_OS',
+                        'Value': AMI_Name
+                    },
+                    {
+                        'Key': 'platform_LaunchedBy',
+                        'Value': LaunchedBy
+                    },
+                ]
+            )
+    except Exception as e:
+        print(e)
