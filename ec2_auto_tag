@@ -21,11 +21,11 @@ def lambda_handler(event, context):
                 ],
                 Tags=[
                     {
-                        'Key': 'platform_OS',
+                        'Key': 'OS_Name',
                         'Value': AMI_Name
                     },
                     {
-                        'Key': 'platform_LaunchedBy',
+                        'Key': 'LaunchedBy',
                         'Value': LaunchedBy
                     },
                 ]
